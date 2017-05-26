@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            margin: auto;
+        }
+    </style>
+</head>
+<body style="background: #000">
+
+<canvas id="canvas" width="500" height="500" ></canvas>
+<script>
+    var canvas = document.getElementById('canvas');
+
+    var ctx = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var r = width / 2;
+    var process = 0;
+    var lineWidth;
+    ctx.translate(r, r);
+
+    //画一个细圆
+    function drawCircle() {
+        lineWidth = 10;
+        ctx.save();
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = '#1F8FFF';
+        ctx.beginPath();
+        ctx.arc(0, 0, r - 10, 0, 2 * Math.PI, false);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    //第二个圆
+    function progressCircle(percentage) {
+        if (process == 0) {
+            lineWidth = 0;
+        } else {
+            lineWidth = 20;
+        }
+        ctx.save();
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = '#1F8FFF';
+        ctx.lineCap = 'round';
+        var rad = 2 * Math.PI / 100 * percentage;
+        var interval = Math.PI / 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, r - 10, -interval, rad - interval, false);
+        ctx.stroke();
+        ctx.restore();
+    }
+    progressCircle(0);
+
+    //进度条数字
+    function progressText(percentage) {
+        ctx.save();
+        ctx.fillStyle = '#fff';
+        ctx.font = '18px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(percentage + '%', 0, 0);
+        ctx.restore();
+    }
+
+
+    drawCircle();
+    var timer = setInterval(function () {
+        if (process > 100) {
+            process = 0;
+            clearInterval(timer);  //只执行一次
+
+            ctx.clearRect(-r, -r, width, height); //循环
+            drawCircle();
+            progressText(process);
+            progressCircle(process);
+        } else {
+            ctx.save();
+            progressCircle(process);
+            ctx.clearRect(-r / 2, -r / 2, r, r);
+            progressText(process);
+            process += 1;
+            ctx.restore();
+        }
+    }, 30)
+
+
+</script>
+</body>
+</html>
